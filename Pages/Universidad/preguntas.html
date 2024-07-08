@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego Universitario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        #main-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco semi-transparente */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        #question-section {
+            margin: 20px 0;
+        }
+
+        #options button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #edd68c;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #options button:hover {
+            background-color: #f2a589;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: red;
+        }
+
+        #result {
+            display: none;
+            font-size: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #restart-button {
+            display: none;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #restart-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container">
+        <h1>Bienvenidos al Juego Universitario</h1>
+        <div id="question-section">
+            <h2>Preguntas de JavaScript</h2>
+            <p id="question"></p>
+            <div id="options"></div>
+            <button id="next-button" onclick="nextQuestion()">Siguiente</button>
+            <p id="feedback"></p>
+        </div>
+        <p id="result"></p>
+        <button id="restart-button" onclick="restartGame()">Reiniciar</button>
+    </div>
+    <script>
+        const questions = [
+            {
+                question: "¿Qué significa HTML?",
+                options: ["HyperText Markup Language", "HyperText Markdown Language", "HyperTool Multi Language"],
+                answer: 0
+            },
+            {
+                question: "¿Cuál es la propiedad CSS para cambiar el color de fondo?",
+                options: ["color", "background-color", "bgcolor"],
+                answer: 1
+            },
+            {
+                question: "¿Cómo se declara una variable en JavaScript?",
+                options: ["var", "let", "const", "todas las anteriores"],
+                answer: 3
+            },
+            {
+                question: "¿Qué etiqueta HTML se usa para definir un párrafo?",
+                options: ["<div>", "<p>", "<span>", "<a>"],
+                answer: 1
+            },
+            {
+                question: "¿Cuál es la propiedad CSS para cambiar el tamaño del texto?",
+                options: ["font-size", "text-size", "font-weight", "text-weight"],
+                answer: 0
+            },
+            {
+                question: "¿Cuál es el operador de asignación en JavaScript?",
+                options: ["=", "==", "===", "!="],
+                answer: 0
+            },
+            {
+                question: "¿Qué etiqueta HTML se utiliza para insertar una imagen?",
+                options: ["<img>", "<picture>", "<image>", "<figure>"],
+                answer: 0
+            },
+            {
+                question: "¿Cuál es la propiedad CSS para cambiar el tipo de fuente?",
+                options: ["font-family", "font-style", "font-weight", "font-size"],
+                answer: 0
+            },
+            {
+                question: "¿Cómo se escribe un comentario en JavaScript?",
+                options: ["<!-- comentario -->", "// comentario", "/* comentario */", "# comentario"],
+                answer: 1
+            },
+            {
+                question: "¿Cuál es la etiqueta HTML para un enlace?",
+                options: ["<link>", "<a>", "<href>", "<url>"],
+                answer: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+
+        function displayQuestion() {
+            const questionElement = document.getElementById("question");
+            const optionsElement = document.getElementById("options");
+            const feedbackElement = document.getElementById("feedback");
+            const nextButton = document.getElementById("next-button");
+            const questionData = questions[currentQuestion];
+
+            questionElement.textContent = questionData.question;
+            optionsElement.innerHTML = "";
+            feedbackElement.textContent = "";
+            nextButton.style.display = "none";
+
+            questionData.options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.onclick = () => checkAnswer(index);
+                optionsElement.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selected) {
+            const questionData = questions[currentQuestion];
+            const feedbackElement = document.getElementById("feedback");
+            const nextButton = document.getElementById("next-button");
+            if (selected === questionData.answer) {
+                feedbackElement.textContent = "¡Correcto!";
+                feedbackElement.className = "correct";
+                correctAnswers++;
+            } else {
+                feedbackElement.textContent = `Incorrecto. La respuesta correcta es: ${questionData.options[questionData.answer]}`;
+                feedbackElement.className = "incorrect";
+                incorrectAnswers++;
+            }
+            nextButton.style.display = "block";
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                displayQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const questionSection = document.getElementById("question-section");
+            const resultElement = document.getElementById("result");
+            const restartButton = document.getElementById("restart-button");
+            questionSection.style.display = "none";
+            resultElement.textContent = `Juego terminado. Acertaste ${correctAnswers} preguntas y tuviste ${incorrectAnswers} incorrectas.`;
+            resultElement.style.display = "block";
+            restartButton.style.display = "block";
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            document.getElementById("question-section").style.display = "block";
+            document.getElementById("result").style.display = "none";
+            document.getElementById("restart-button").style.display = "none";
+            displayQuestion();
+        }
+
+        window.onload = displayQuestion;
+    </script>
+</body>
+</html>
